@@ -3,10 +3,11 @@ import {
   StyleSheet,
   Text,
   View,
-  SafeAreaView,
   ScrollView,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
+import { SafeAreaProvider, useSafeAreaInsets } from "react-native-safe-area-context";
+import { useIOSPWA } from "./src/useIOSPWA";
 import PolitenessSlider from "./src/components/PolitenessSlider";
 import MessageCard from "./src/components/MessageCard";
 import CopyButton from "./src/components/CopyButton";
@@ -23,7 +24,9 @@ function getRandomMessage(level: PolitenessLevel, category: Category): string {
   return pool[Math.floor(Math.random() * pool.length)];
 }
 
-export default function App() {
+function AppContent() {
+  useIOSPWA();
+  const insets = useSafeAreaInsets();
   const [level, setLevel] = useState<PolitenessLevel>(3);
   const [category, setCategory] = useState<Category>("general");
   const [currentMessage, setCurrentMessage] = useState(() =>
@@ -51,10 +54,18 @@ export default function App() {
   }, [level, category]);
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <View style={styles.safe}>
       <StatusBar style="light" />
       <ScrollView
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={[
+          styles.scrollContent,
+          {
+            paddingTop: Math.max(insets.top, 20) + 28,
+            paddingBottom: Math.max(insets.bottom, 20) + 20,
+            paddingLeft: Math.max(insets.left, 20),
+            paddingRight: Math.max(insets.right, 20),
+          },
+        ]}
         style={styles.scroll}
       >
         <View style={styles.header}>
@@ -81,7 +92,15 @@ export default function App() {
 
         <CopyButton message={currentMessage} level={level} />
       </ScrollView>
-    </SafeAreaView>
+    </View>
+  );
+}
+
+export default function App() {
+  return (
+    <SafeAreaProvider>
+      <AppContent />
+    </SafeAreaProvider>
   );
 }
 
@@ -94,9 +113,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    padding: 20,
-    paddingTop: 48,
-    paddingBottom: 40,
     gap: 16,
   },
   header: {

@@ -105,9 +105,9 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   levelButton: {
-    width: 42,
-    height: 42,
-    borderRadius: 21,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     backgroundColor: "#2a2a3e",
     justifyContent: "center",
     alignItems: "center",
