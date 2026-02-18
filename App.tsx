@@ -19,9 +19,18 @@ import {
   LEVEL_COLORS,
 } from "./src/data/messages";
 
-function getRandomMessage(level: PolitenessLevel, category: Category): string {
+function getRandomMessage(
+  level: PolitenessLevel,
+  category: Category,
+  exclude?: string
+): string {
   const pool = messages[level][category];
-  return pool[Math.floor(Math.random() * pool.length)];
+  if (pool.length <= 1) return pool[0];
+  let pick: string;
+  do {
+    pick = pool[Math.floor(Math.random() * pool.length)];
+  } while (pick === exclude);
+  return pick;
 }
 
 function AppContent() {
@@ -50,7 +59,7 @@ function AppContent() {
   );
 
   const handleShuffle = useCallback(() => {
-    setCurrentMessage(getRandomMessage(level, category));
+    setCurrentMessage((prev) => getRandomMessage(level, category, prev));
   }, [level, category]);
 
   return (
